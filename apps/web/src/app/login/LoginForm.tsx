@@ -1,12 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -25,7 +23,7 @@ export function LoginForm() {
     })
 
     if (res.ok) {
-      router.push('/sessions/new')
+      window.location.href = '/sessions/new'
     } else {
       const data = (await res.json()) as { error?: string }
       setError(data.error ?? 'Login failed')

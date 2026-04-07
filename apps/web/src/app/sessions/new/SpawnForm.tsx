@@ -15,11 +15,11 @@ export function SpawnForm({ hosts, profiles }: { hosts: Host[]; profiles: Profil
   const router = useRouter()
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+    e.preventDefault()
     void handleSubmitAsync(e)
   }
 
   async function handleSubmitAsync(e: React.SyntheticEvent<HTMLFormElement>) {
-    e.preventDefault()
     setLoading(true)
     setError(null)
 
