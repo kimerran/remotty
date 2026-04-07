@@ -13,5 +13,10 @@ export default defineConfig({
     env: {
       SESSION_PASSWORD: 'test-session-password-at-least-32-chars!!',
     },
+    coverage: {
+      provider: 'v8',
+      include: ['src/**'],
+      exclude: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'src/types/**', 'node_modules/**'],
+    },
   },
 })
