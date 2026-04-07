@@ -45,9 +45,12 @@ export async function POST(req: Request): Promise<NextResponse> {
   if (existing) return NextResponse.json({ error: 'Profile name already exists' }, { status: 409 })
 
   // Set ownerId to current user (admins may want to create org-wide profiles)
+  // Normalize empty cwd to null so the daemon uses its own working directory
+  const { cwd, ...rest } = parsed.data
   const profile = await getDb().profile.create({
     data: {
-      ...parsed.data,
+      ...rest,
+      cwd: cwd === '' ? null : cwd,
       ownerId: auth.userId ?? undefined,
     },
   })

@@ -51,7 +51,11 @@ export async function PUT(
     if (existing) return NextResponse.json({ error: 'Profile name already exists' }, { status: 409 })
   }
 
-  const updated = await getDb().profile.update({ where: { id }, data: parsed.data })
+  // Normalize empty cwd to null so the daemon uses its own working directory
+  const { cwd, ...rest } = parsed.data
+  const updateData: Record<string, unknown> = { ...rest }
+  if (cwd !== undefined) updateData['cwd'] = cwd === '' ? null : cwd
+  const updated = await getDb().profile.update({ where: { id }, data: updateData })
 
   await createAuditLog({
     user: auth,

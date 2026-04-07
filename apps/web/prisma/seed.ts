@@ -34,7 +34,6 @@ async function main() {
       command: 'claude',
       args: ['--dangerously-skip-permissions'],
       env: {},
-      cwd: process.env['HOME'] ?? '/root',
     },
   })
 
