@@ -6,9 +6,8 @@ import bcrypt from 'bcrypt'
 
 // Maps hostId → daemon WS (used to route spawn commands)
 // Stored on globalThis so the custom server and Next.js route handlers share the same instance
-const g = globalThis as unknown as { daemonByHost?: Map<string, WebSocket> }
-if (!g.daemonByHost) g.daemonByHost = new Map<string, WebSocket>()
-const daemonByHost = g.daemonByHost
+if (!globalThis.daemonByHost) globalThis.daemonByHost = new Map<string, WebSocket>()
+const daemonByHost = globalThis.daemonByHost
 
 export function registerHostHub(wss: WebSocketServer): void {
   wss.on('connection', (ws: WebSocket) => {
@@ -84,6 +83,9 @@ async function authenticateHost(ws: WebSocket, hostName: string, token: string):
   if (!host) return null
   const valid = await bcrypt.compare(token, host.token)
   if (!valid) return null
+  // Known TOCTOU: host could be deleted between findUnique and update. If that happens,
+  // Prisma's update silently no-ops (no row matched), which is acceptable — the daemon
+  // will be rejected on its next heartbeat or reconnect.
   await getDb().host.update({ where: { id: host.id }, data: { online: true, lastSeenAt: new Date() } })
   return host.id
 }

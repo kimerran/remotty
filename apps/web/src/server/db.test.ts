@@ -1,12 +1,16 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { getDb } from './db.js'
-const db = getDb()
+import type { PrismaClient } from '@prisma/client'
 
 // These tests require a real database. Run: docker compose up -d
 // then: DATABASE_URL=postgresql://orch:orch@localhost:5432/orch pnpm test
+const hasDb = !!process.env['DATABASE_URL']
 
-describe('seed data', () => {
+describe.skipIf(!hasDb)('seed data', () => {
+  let db: PrismaClient
+
   beforeAll(async () => {
+    db = getDb()
     await db.$connect()
   })
 

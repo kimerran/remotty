@@ -55,7 +55,8 @@ export async function POST(req: Request): Promise<NextResponse> {
     return NextResponse.json({ error: 'No daemon available for this host' }, { status: 503 })
   }
 
-  // Optimistically mark as RUNNING
+  // Optimistically mark as RUNNING before daemon confirms. If the process fails to exec,
+  // the daemon will send session.exit and the status will be corrected then.
   await getDb().session.update({ where: { id: session.id }, data: { status: 'RUNNING' } })
 
   return NextResponse.json({ sessionId: session.id })

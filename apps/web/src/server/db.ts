@@ -9,11 +9,9 @@ function createPrismaClient() {
 }
 
 // Singleton pattern: prevents multiple PrismaClient instances in dev (hot reload)
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
-
 export function getDb(): PrismaClient {
-  if (!globalForPrisma.prisma) {
-    globalForPrisma.prisma = createPrismaClient()
+  if (!globalThis.prisma) {
+    globalThis.prisma = createPrismaClient()
   }
-  return globalForPrisma.prisma
+  return globalThis.prisma
 }

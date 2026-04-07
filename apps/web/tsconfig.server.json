@@ -1,0 +1,11 @@
+{
+  "extends": "@orchestrator/config/tsconfig.nextjs.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["server.ts", "src/types/global.d.ts"]
+}
