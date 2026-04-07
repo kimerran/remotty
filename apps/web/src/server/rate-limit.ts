@@ -8,7 +8,8 @@ function getRedis(): Redis {
 }
 
 /** Returns true if the request is allowed, false if rate-limited.
- *  Uses a sliding window: max `limit` attempts per `windowSecs` per `key`.
+ *  Uses a fixed window: max `limit` attempts per `windowSecs` per `key`.
+ *  Note: up to 2x the limit is possible at window boundaries.
  */
 export async function checkRateLimit(
   key: string,

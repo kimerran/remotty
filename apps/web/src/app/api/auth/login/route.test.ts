@@ -30,6 +30,7 @@ vi.mock('@/server/rate-limit', () => ({
 
 import { POST } from './route.js'
 import { db } from '@/server/db'
+import { checkRateLimit } from '@/server/rate-limit'
 import bcrypt from 'bcrypt'
 import type { NextRequest } from 'next/server'
 
@@ -84,5 +85,16 @@ describe('POST /api/auth/login', () => {
     }) as unknown as NextRequest
     const res = await POST(req)
     expect(res.status).toBe(200)
+  })
+
+  it('returns 429 when rate limited', async () => {
+    vi.mocked(checkRateLimit).mockResolvedValueOnce(false)
+    const req = new Request('http://localhost/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username: 'admin', password: 'x' }),
+      headers: { 'Content-Type': 'application/json' },
+    }) as unknown as NextRequest
+    const res = await POST(req)
+    expect(res.status).toBe(429)
   })
 })

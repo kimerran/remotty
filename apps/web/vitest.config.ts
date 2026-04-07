@@ -7,4 +7,9 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
+  test: {
+    env: {
+      SESSION_PASSWORD: 'test-session-password-at-least-32-chars!!',
+    },
+  },
 })

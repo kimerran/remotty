@@ -3,6 +3,6 @@ import { getSession } from '@/server/auth'
 
 export async function POST(): Promise<NextResponse> {
   const session = await getSession()
-  session.destroy()
+  await session.destroy()
   return NextResponse.json({ ok: true })
 }

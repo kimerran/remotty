@@ -7,6 +7,10 @@ export interface SessionData {
   username?: string
 }
 
+if (!process.env['SESSION_PASSWORD']) {
+  throw new Error('SESSION_PASSWORD environment variable is required')
+}
+
 export const sessionOptions: SessionOptions = {
   password: process.env['SESSION_PASSWORD']!,
   cookieName: 'remotty-session',
