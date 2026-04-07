@@ -1,5 +1,7 @@
 # Remotty — Agent Orchestrator
 
+[![CI](https://github.com/kimerran/remotty/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/kimerran/remotty/actions/workflows/ci.yml)
+
 Spawn and manage coding agents (Claude Code, Codex, etc.) across machines with a live browser terminal.
 
 ## Running Locally
