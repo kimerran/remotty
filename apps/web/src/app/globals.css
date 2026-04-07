@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  /* Surfaces */
+  --color-surface-container-lowest: #060e20;
+  --color-surface: #0b1326;
+  --color-background: #0b1326;
+  --color-surface-dim: #0b1326;
+  --color-surface-container-low: #131b2e;
+  --color-surface-container: #171f33;
+  --color-surface-container-high: #222a3d;
+  --color-surface-container-highest: #2d3449;
+  --color-surface-variant: #2d3449;
+  --color-surface-bright: #31394d;
+
+  /* On-surface */
+  --color-on-surface: #dae2fd;
+  --color-on-background: #dae2fd;
+  --color-on-surface-variant: #bcc9cd;
+  --color-inverse-surface: #dae2fd;
+  --color-inverse-on-surface: #283044;
+
+  /* Primary */
+  --color-primary: #2fd9f4;
+  --color-primary-container: #00b7cf;
+  --color-primary-fixed: #a2eeff;
+  --color-primary-fixed-dim: #2fd9f4;
+  --color-on-primary: #00363e;
+  --color-on-primary-container: #00424c;
+  --color-on-primary-fixed: #001f25;
+  --color-on-primary-fixed-variant: #004e5a;
+  --color-inverse-primary: #006877;
+  --color-surface-tint: #2fd9f4;
+
+  /* Secondary */
+  --color-secondary: #b9c7e0;
+  --color-secondary-container: #3c4a5e;
+  --color-on-secondary: #233144;
+  --color-on-secondary-container: #abb9d2;
+
+  /* Tertiary */
+  --color-tertiary: #4edea3;
+  --color-tertiary-container: #1bbd85;
+  --color-on-tertiary: #003824;
+  --color-on-tertiary-container: #00452e;
+
+  /* Error */
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-on-error: #690005;
+  --color-on-error-container: #ffdad6;
+
+  /* Outlines */
+  --color-outline: #869397;
+  --color-outline-variant: #3d494c;
+
+  /* Fonts */
+  --font-headline: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Radii — override Tailwind defaults */
+  --radius-DEFAULT: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+}

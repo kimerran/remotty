@@ -1,0 +1,25 @@
+import type { ITheme } from '@xterm/xterm'
+
+export const xtermTheme: ITheme = {
+  background: '#060e20',
+  foreground: '#dae2fd',
+  cursor: '#2fd9f4',
+  cursorAccent: '#00363e',
+  selectionBackground: '#2fd9f440',
+  black: '#0b1326',
+  red: '#ffb4ab',
+  green: '#4edea3',
+  yellow: '#ffd080',
+  blue: '#2fd9f4',
+  magenta: '#b9c7e0',
+  cyan: '#2fd9f4',
+  white: '#dae2fd',
+  brightBlack: '#3d494c',
+  brightRed: '#ffb4ab',
+  brightGreen: '#4edea3',
+  brightYellow: '#ffd080',
+  brightBlue: '#2fd9f4',
+  brightMagenta: '#b9c7e0',
+  brightCyan: '#2fd9f4',
+  brightWhite: '#dae2fd',
+}
