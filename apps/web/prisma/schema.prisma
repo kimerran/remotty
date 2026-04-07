@@ -10,7 +10,7 @@ model User {
   id           String    @id @default(cuid())
   username     String    @unique
   passwordHash String
-  role         Role      @default(ADMIN)
+  role         Role      @default(USER)
   createdAt    DateTime  @default(now())
   sessions     Session[]
 }

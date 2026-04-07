@@ -14,11 +14,12 @@ describe('seed data', () => {
   })
 
   it('admin user exists', async () => {
-    const user = await db.user.findUnique({ where: { username: 'admin' } })
+    const username = process.env['ADMIN_USERNAME'] ?? 'admin'
+    const user = await db.user.findUnique({ where: { username } })
     expect(user).not.toBeNull()
     expect(user?.role).toBe('ADMIN')
-    expect(user?.passwordHash).not.toBe('')
-    expect(user?.passwordHash).not.toBe(process.env['ADMIN_PASSWORD'])
+    expect(user?.passwordHash).toMatch(/^\$2[ab]\$/) // must be a bcrypt hash
+    expect(user?.passwordHash).not.toBe(process.env['ADMIN_PASSWORD']) // must not be plaintext
   })
 
   it('default Claude Code profile exists', async () => {
