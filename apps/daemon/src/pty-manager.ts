@@ -24,7 +24,7 @@ export class PtyManager {
       name: 'xterm-256color',
       cols: opts.cols,
       rows: opts.rows,
-      cwd: opts.cwd ?? process.env['HOME'] ?? '/tmp',
+      cwd: opts.cwd ?? process.cwd(),
       env: safeEnv,
     })
     p.onData((d) => { onData(Buffer.from(d, 'utf8')) })
