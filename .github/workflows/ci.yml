@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  ci:
+    name: Build, Typecheck & Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: orch
+          POSTGRES_PASSWORD: orch
+          POSTGRES_DB: orch
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://orch:orch@localhost:5432/orch
+      SESSION_PASSWORD: ci-session-password-32-chars-min!!
+      NODE_ENV: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.6.4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+
+      - name: Generate Prisma client & run migrations
+        run: |
+          pnpm --filter web exec prisma generate
+          pnpm --filter web exec prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://orch:orch@localhost:5432/orch
+
+      - name: Test
+        run: pnpm test
