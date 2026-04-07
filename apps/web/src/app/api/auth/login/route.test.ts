@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-const mockUserFindUnique = vi.fn()
+// Use vi.hoisted to ensure mocks are available at the same hoisting level as vi.mock
+const { mockUserFindUnique } = vi.hoisted(() => ({ mockUserFindUnique: vi.fn() }))
 
 // Mock the db module
 vi.mock('@/server/db', () => ({

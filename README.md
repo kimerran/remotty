@@ -71,12 +71,27 @@ Navigate to **http://localhost:3000** and log in with your `ADMIN_USERNAME` / `A
 
 Once logged in, go to **New Session** — the `local-dev` host should appear in the dropdown (the daemon connects on startup). Click **Spawn Agent Session** to launch a live terminal.
 
+## Deploying Hosts
+
+### Adding a new host
+
+1. Log in as admin and navigate to **Hosts** (DNS icon in the sidebar).
+2. Click **Register Host**, enter a name (e.g. `production-1`), and click **Generate Token**.
+3. Copy the token — it's shown only once.
+4. On the host machine, set `HOST_TOKEN` to this token and restart the daemon.
+
+### Creating profiles
+
+1. Navigate to **Profiles** (tune icon in the sidebar).
+2. Click **New Profile** and fill in the name, command, arguments, and environment variables.
+3. Profiles support any agent variant — native Claude Code, OpenRouter, custom base URL, etc.
+
 ## Railway Deploy
 
 1. Create a Railway project with a Postgres plugin.
 2. Set all env vars from `.env.example` on the web service.
 3. Push — Railway builds from `apps/web/Dockerfile`.
-4. Run the daemon locally, pointing `SERVER_WS_URL` at your Railway `wss://` URL.
+4. Add a Railway service for the daemon, pointing `SERVER_WS_URL` at your Railway `wss://` URL.
 
 ## Monorepo
 

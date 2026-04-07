@@ -1,3 +1,7 @@
+// Initialize OpenTelemetry before any other imports
+import { initTelemetry } from './src/server/telemetry.js'
+initTelemetry()
+
 import next from 'next'
 import { createServer } from 'node:http'
 import { WebSocketServer } from 'ws'

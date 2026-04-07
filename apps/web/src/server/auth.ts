@@ -4,6 +4,7 @@ import type { IncomingMessage } from 'node:http'
 export interface SessionData {
   userId?: string
   username?: string
+  role?: 'ADMIN' | 'USER'
 }
 
 function getSessionPassword(): string {
@@ -52,4 +53,40 @@ export async function getSessionFromWsRequest(req: IncomingMessage): Promise<Ses
   } catch {
     return null
   }
+}
+
+/** Returns session data or throws 401 */
+export async function requireAuthOrThrow(): Promise<SessionData> {
+  const data = await requireAuth()
+  if (!data) throw new Error('Unauthorized')
+  return data
+}
+
+/** Check if user is admin */
+export function isAdmin(session: SessionData): boolean {
+  return session.role === 'ADMIN'
+}
+
+/** ACL: Check if user can access a host */
+export function canAccessHost(userId: string, role: 'ADMIN' | 'USER' | undefined, hostOwnerId: string | null | undefined): boolean {
+  if (role === 'ADMIN') return true
+  return userId === hostOwnerId
+}
+
+/** ACL: Check if user can access a profile */
+export function canAccessProfile(userId: string, role: 'ADMIN' | 'USER' | undefined, profileOwnerId: string | null | undefined): boolean {
+  if (role === 'ADMIN') return true
+  return userId === profileOwnerId
+}
+
+/** ACL: Check if user can access a session (owner or explicitly shared) */
+export function canAccessSession(
+  userId: string,
+  role: 'ADMIN' | 'USER' | undefined,
+  sessionOwnerId: string,
+  sessionAccessList: { userId: string }[],
+): boolean {
+  if (role === 'ADMIN') return true
+  if (userId === sessionOwnerId) return true
+  return sessionAccessList.some((a) => a.userId === userId)
 }

@@ -7,12 +7,16 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(cuid())
-  username     String    @unique
-  passwordHash String
-  role         Role      @default(USER)
-  createdAt    DateTime  @default(now())
-  sessions     Session[]
+  id            String          @id @default(cuid())
+  username      String          @unique
+  passwordHash  String
+  role          Role            @default(USER)
+  createdAt     DateTime        @default(now())
+  sessions      Session[]
+  ownedHosts    Host[]
+  ownedProfiles Profile[]
+  sessionAccess SessionAccess[]
+  auditLogs     AuditLog[]
 }
 
 enum Role {
@@ -26,7 +30,9 @@ model Host {
   token      String     @unique
   lastSeenAt DateTime?
   online     Boolean    @default(false)
-  createdAt  DateTime   @default(now())
+  createdAt  DateTime  @default(now())
+  ownerId    String?
+  owner      User?      @relation(fields: [ownerId], references: [id])
   sessions   Session[]
 }
 
@@ -37,24 +43,29 @@ model Profile {
   args      String[]
   env       Json
   cwd       String?
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
+  ownerId   String?
+  owner     User?     @relation(fields: [ownerId], references: [id])
   sessions  Session[]
 }
 
 model Session {
-  id        String        @id @default(cuid())
-  hostId    String
-  profileId String
-  userId    String
-  status    SessionStatus @default(PENDING)
-  pid       Int?
-  startedAt DateTime      @default(now())
-  endedAt   DateTime?
-  exitCode  Int?
-  host      Host          @relation(fields: [hostId], references: [id])
-  profile   Profile       @relation(fields: [profileId], references: [id])
-  user      User          @relation(fields: [userId], references: [id])
-  events    SessionEvent[]
+  id            String        @id @default(cuid())
+  hostId        String
+  profileId     String
+  userId        String
+  status        SessionStatus @default(PENDING)
+  pid           Int?
+  startedAt     DateTime      @default(now())
+  endedAt       DateTime?
+  exitCode      Int?
+  host          Host          @relation(fields: [hostId], references: [id])
+  profile       Profile       @relation(fields: [profileId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
+  events        SessionEvent[]
+  metrics       SessionMetric?
+  parsedEvents   ParsedEvent[]
+  accessList    SessionAccess[]
 }
 
 enum SessionStatus {
@@ -73,4 +84,77 @@ model SessionEvent {
   session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@index([sessionId, ts])
+}
+
+model ParsedEvent {
+  id          String   @id @default(cuid())
+  sessionId   String
+  ts          DateTime @default(now())
+  kind        ParsedEventKind
+  data        Json
+  session     Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, kind])
+}
+
+enum ParsedEventKind {
+  TOOL_CALL
+  FILE_EDIT
+  ERROR
+  TEST_RESULT
+  TOKEN_USAGE
+  COMMAND
+}
+
+model SessionMetric {
+  id              String   @id @default(cuid())
+  sessionId       String   @unique
+  inputTokens     Int      @default(0)
+  outputTokens    Int      @default(0)
+  totalTokens     Int      @default(0)
+  costUSD         Float    @default(0)
+  durationMs      Int      @default(0)
+  exitCode        Int?
+  summary         String?
+  session         Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model Webhook {
+  id        String   @id @default(cuid())
+  url       String
+  events    String[]
+  secret    String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model SessionAccess {
+  id         String       @id @default(cuid())
+  sessionId  String
+  userId     String
+  accessType AccessType  @default(READ)
+  session    Session      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime     @default(now())
+
+  @@unique([sessionId, userId])
+}
+
+enum AccessType {
+  READ
+  WRITE
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String
+  resource  String
+  details   Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([resource, action])
 }

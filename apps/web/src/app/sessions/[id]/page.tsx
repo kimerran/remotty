@@ -2,6 +2,8 @@ import { requireAuth } from '@/server/auth'
 import { getDb } from '@/server/db'
 import { redirect, notFound } from 'next/navigation'
 import { Terminal } from './Terminal'
+import { SessionActions } from './SessionActions'
+import Link from 'next/link'
 
 export default async function SessionPage({ params }: { params: Promise<{ id: string }> }) {
   const auth = await requireAuth()
@@ -15,17 +17,35 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
 
   if (!session || session.userId !== auth.userId) notFound()
 
+  const user = await getDb().user.findUnique({ where: { id: auth.userId } })
+
   return (
     <div className="flex h-screen bg-background">
       <aside className="w-14 bg-surface-container flex flex-col items-center py-8 gap-6 border-r border-outline-variant/10">
         <span className="text-[10px] font-headline font-black text-primary tracking-tighter">R</span>
-        <nav className="flex flex-col gap-4 mt-4">
-          {['dashboard', 'terminal', 'dns', 'menu_book'].map((icon) => (
-            <span key={icon} className="material-symbols-outlined text-lg text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
-              {icon}
-            </span>
-          ))}
+        <nav className="flex flex-col gap-4">
+          <Link href="/sessions" className="text-on-surface-variant hover:text-primary transition-colors">
+            <span className="material-symbols-outlined text-lg">dashboard</span>
+          </Link>
+          <Link href="/sessions/new" className="text-on-surface-variant hover:text-primary transition-colors">
+            <span className="material-symbols-outlined text-lg">add_circle</span>
+          </Link>
+          <Link href="/profiles" className="text-on-surface-variant hover:text-primary transition-colors">
+            <span className="material-symbols-outlined text-lg">tune</span>
+          </Link>
+          {user?.role === 'ADMIN' && (
+            <Link href="/admin/hosts" className="text-on-surface-variant hover:text-primary transition-colors">
+              <span className="material-symbols-outlined text-lg">dns</span>
+            </Link>
+          )}
         </nav>
+        <div className="mt-auto">
+          <form action="/api/auth/logout" method="POST">
+            <button type="submit" className="text-on-surface-variant hover:text-primary p-1">
+              <span className="material-symbols-outlined text-lg">logout</span>
+            </button>
+          </form>
+        </div>
       </aside>
 
       <div className="flex flex-col flex-1 min-w-0">
@@ -44,16 +64,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
               {session.host.name} · {session.profile.name}
             </span>
           </div>
-          <form action={`/api/sessions/${id}/kill`} method="POST">
-            <button
-              type="submit"
-              className="text-on-surface-variant hover:text-error transition-colors p-1"
-              aria-label="Kill session"
-              disabled={session.status !== 'RUNNING' && session.status !== 'PENDING'}
-            >
-              <span className="material-symbols-outlined text-lg">delete</span>
-            </button>
-          </form>
+          <SessionActions sessionId={id} sessionStatus={session.status} />
         </header>
 
         <main className="flex-1 overflow-hidden">
