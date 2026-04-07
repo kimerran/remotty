@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@orchestrator/config": "workspace:*",
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4.2.2",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^25.5.2",
@@ -36,6 +37,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/ws": "^8.18.1",
     "postcss": "^8.5.8",
+    "esbuild": "^0.27.7",
     "prisma": "^7.6.0",
     "tailwindcss": "^4.2.2",
     "tsx": "^4.21.0",

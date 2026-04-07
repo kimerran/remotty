@@ -16,6 +16,20 @@ COPY --from=deps /app/packages ./packages
 COPY . .
 RUN pnpm --filter protocol build
 RUN cd apps/web && pnpm build
+# Bundle server.ts and all its local imports into a single ESM file
+RUN cd apps/web && node_modules/.bin/esbuild server.ts \
+    --bundle \
+    --platform=node \
+    --format=esm \
+    --outfile=.next/standalone/apps/web/server.mjs \
+    --external:next \
+    --external:@prisma/client \
+    --external:@prisma/adapter-pg \
+    --external:ws \
+    --external:bcrypt \
+    --external:iron-session \
+    --external:ioredis \
+    --external:@orchestrator/protocol
 
 FROM base AS runner
 WORKDIR /app
@@ -25,7 +39,8 @@ COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder /app/apps/web/public ./apps/web/public
 COPY --from=builder /app/apps/web/prisma ./apps/web/prisma
 COPY --from=builder /app/apps/web/prisma.config.ts ./apps/web/prisma.config.ts
-COPY --from=builder /app/apps/web/server.ts ./apps/web/server.ts
-RUN pnpm add -g tsx
+# Copy prisma CLI so migrate deploy works without network access
+COPY --from=builder /app/apps/web/node_modules/.bin/prisma ./apps/web/node_modules/.bin/prisma
+COPY --from=builder /app/apps/web/node_modules/prisma ./apps/web/node_modules/prisma
 EXPOSE 3000
-CMD ["sh", "-c", "cd apps/web && npx prisma migrate deploy && tsx server.ts"]
+CMD ["sh", "-c", "cd apps/web && node_modules/.bin/prisma migrate deploy && node server.mjs"]
