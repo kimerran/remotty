@@ -14,7 +14,11 @@ export function SpawnForm({ hosts, profiles }: { hosts: Host[]; profiles: Profil
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+    void handleSubmitAsync(e)
+  }
+
+  async function handleSubmitAsync(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError(null)
@@ -43,7 +47,7 @@ export function SpawnForm({ hosts, profiles }: { hosts: Host[]; profiles: Profil
         <div className="relative">
           <select
             value={hostId}
-            onChange={(e) => setHostId(e.target.value)}
+            onChange={(e) => { setHostId(e.target.value) }}
             className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/30 rounded-lg py-4 px-6 text-on-surface font-mono focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
           >
             {hosts.map((h) => (
@@ -60,7 +64,7 @@ export function SpawnForm({ hosts, profiles }: { hosts: Host[]; profiles: Profil
         <div className="relative">
           <select
             value={profileId}
-            onChange={(e) => setProfileId(e.target.value)}
+            onChange={(e) => { setProfileId(e.target.value) }}
             className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/30 rounded-lg py-4 px-6 text-on-surface font-mono focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
           >
             {profiles.map((p) => (

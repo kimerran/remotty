@@ -23,12 +23,12 @@ describe('sessionRouter', () => {
   })
 
   it('returns empty set for unknown session', () => {
-    expect(sessionRouter.getClientWss('unknown-' + Date.now()).size).toBe(0)
+    expect(sessionRouter.getClientWss(`unknown-${String(Date.now())}`).size).toBe(0)
   })
 
   it('removes a client', () => {
     const client = mockWs()
-    const key = 'sess-remove-' + Date.now()
+    const key = `sess-remove-${String(Date.now())}`
     sessionRouter.registerClient(key, client)
     sessionRouter.removeClient(key, client)
     expect(sessionRouter.getClientWss(key).size).toBe(0)
@@ -36,15 +36,15 @@ describe('sessionRouter', () => {
 
   it('registers and retrieves host WS', () => {
     const daemonWs = mockWs()
-    const key = 'sess-host-' + Date.now()
+    const key = `sess-host-${String(Date.now())}`
     sessionRouter.registerHostSession(key, daemonWs)
     expect(sessionRouter.getHostWs(key)).toBe(daemonWs)
   })
 
   it('returns sessions for a daemon', () => {
     const daemonWs = mockWs()
-    const key1 = 'sess-daemon1-' + Date.now()
-    const key2 = 'sess-daemon2-' + Date.now()
+    const key1 = `sess-daemon1-${String(Date.now())}`
+    const key2 = `sess-daemon2-${String(Date.now())}`
     sessionRouter.registerHostSession(key1, daemonWs)
     sessionRouter.registerHostSession(key2, daemonWs)
     const sessions = sessionRouter.getSessionsForDaemon(daemonWs)

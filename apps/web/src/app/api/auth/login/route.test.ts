@@ -48,6 +48,7 @@ describe('POST /api/auth/login', () => {
   })
 
   it('returns 401 on unknown username', async () => {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     vi.mocked(db.user.findUnique).mockResolvedValue(null)
     const req = new Request('http://localhost/api/auth/login', {
       method: 'POST',
@@ -59,6 +60,7 @@ describe('POST /api/auth/login', () => {
   })
 
   it('returns 401 on wrong password', async () => {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     vi.mocked(db.user.findUnique).mockResolvedValue({
       id: '1', username: 'admin', passwordHash: await bcrypt.hash('correct', 12),
       role: 'ADMIN', createdAt: new Date(),
@@ -74,6 +76,7 @@ describe('POST /api/auth/login', () => {
 
   it('returns 200 on correct credentials', async () => {
     const hash = await bcrypt.hash('correct', 12)
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     vi.mocked(db.user.findUnique).mockResolvedValue({
       id: 'user-1', username: 'admin', passwordHash: hash,
       role: 'ADMIN', createdAt: new Date(),

@@ -27,10 +27,10 @@ export class PtyManager {
       cwd: opts.cwd ?? process.env['HOME'] ?? '/tmp',
       env: safeEnv,
     })
-    p.onData((d) => onData(Buffer.from(d, 'utf8')))
+    p.onData((d) => { onData(Buffer.from(d, 'utf8')) })
     p.onExit(({ exitCode, signal }) => {
       this.sessions.delete(id)
-      onExit(exitCode ?? null, signal ? String(signal) : null)
+      onExit(exitCode, signal ? String(signal) : null)
     })
     this.sessions.set(id, p)
     return p.pid

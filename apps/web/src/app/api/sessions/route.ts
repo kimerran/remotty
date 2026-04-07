@@ -33,7 +33,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     data: {
       hostId,
       profileId,
-      userId: authSession.userId!,
+      userId: authSession.userId ?? '',
       status: 'PENDING',
     },
   })

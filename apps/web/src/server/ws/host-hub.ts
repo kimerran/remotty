@@ -1,21 +1,25 @@
 import { WebSocketServer, WebSocket } from 'ws'
-import type { IncomingMessage } from 'node:http'
 import { DaemonMessage } from '@orchestrator/protocol'
-import { sessionRouter } from '../session-router.js'
-import { db } from '../db.js'
+import { sessionRouter } from '@/server/session-router'
+import { db } from '@/server/db'
 import bcrypt from 'bcrypt'
 
 // Maps hostId → daemon WS (used to route spawn commands)
 const daemonByHost = new Map<string, WebSocket>()
 
 export function registerHostHub(wss: WebSocketServer): void {
-  wss.on('connection', (ws: WebSocket, _req: IncomingMessage) => {
+  wss.on('connection', (ws: WebSocket) => {
     let authenticatedHostId: string | null = null
 
     ws.on('message', (raw) => {
       let msg: ReturnType<typeof DaemonMessage.parse>
+      const rawStr = Buffer.isBuffer(raw)
+        ? raw.toString('utf8')
+        : Array.isArray(raw)
+          ? Buffer.concat(raw).toString('utf8')
+          : Buffer.from(raw).toString('utf8')
       try {
-        msg = DaemonMessage.parse(JSON.parse(raw.toString()))
+        msg = DaemonMessage.parse(JSON.parse(rawStr))
       } catch {
         return
       }
@@ -91,7 +95,8 @@ export function spawnOnDaemon(
   payload: Record<string, unknown>,
 ): WebSocket | null {
   // For Sprint 1 with a single daemon, pick the first available
-  const daemonWs = [...daemonByHost.values()][0]
+  const daemonWs: WebSocket | undefined = [...daemonByHost.values()][0]
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!daemonWs || daemonWs.readyState !== WebSocket.OPEN) return null
   sessionRouter.registerHostSession(sessionId, daemonWs)
   daemonWs.send(JSON.stringify(payload))

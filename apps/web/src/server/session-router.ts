@@ -12,7 +12,7 @@ export const sessionRouter = {
 
   registerClient(sessionId: string, ws: WebSocket): void {
     if (!clientMap.has(sessionId)) clientMap.set(sessionId, new Set())
-    clientMap.get(sessionId)!.add(ws)
+    clientMap.get(sessionId)?.add(ws)
   },
 
   getHostWs(sessionId: string): WebSocket | undefined {

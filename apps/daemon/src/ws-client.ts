@@ -32,11 +32,16 @@ function connect(url: string, hostName: string, token: string, pm: PtyManager): 
   })
 
   ws.on('message', (raw) => {
+    const rawStr = Buffer.isBuffer(raw)
+      ? raw.toString('utf8')
+      : Array.isArray(raw)
+        ? Buffer.concat(raw).toString('utf8')
+        : Buffer.from(raw).toString('utf8')
     let msg: ReturnType<typeof ServerMessage.parse>
     try {
-      msg = ServerMessage.parse(JSON.parse(raw.toString()))
+      msg = ServerMessage.parse(JSON.parse(rawStr))
     } catch (err) {
-      console.error({ err, raw: raw.toString() }, 'invalid server message — ignoring')
+      console.error({ err, raw: rawStr }, 'invalid server message — ignoring')
       return
     }
 
@@ -45,8 +50,8 @@ function connect(url: string, hostName: string, token: string, pm: PtyManager): 
         pm.spawn(
           msg.sessionId,
           { command: msg.command, args: msg.args, env: msg.env, cwd: msg.cwd, cols: msg.cols, rows: msg.rows },
-          (buf) => ws.send(JSON.stringify({ type: 'session.stdout', sessionId: msg.sessionId, data: buf.toString('base64') })),
-          (exitCode, signal) => ws.send(JSON.stringify({ type: 'session.exit', sessionId: msg.sessionId, exitCode, signal })),
+          (buf) => { ws.send(JSON.stringify({ type: 'session.stdout', sessionId: msg.sessionId, data: buf.toString('base64') })) },
+          (exitCode, signal) => { ws.send(JSON.stringify({ type: 'session.exit', sessionId: msg.sessionId, exitCode, signal })) },
         )
         break
       case 'session.stdin':
@@ -66,7 +71,7 @@ function connect(url: string, hostName: string, token: string, pm: PtyManager): 
   })
 
   ws.on('close', () => {
-    console.warn(`daemon disconnected — reconnecting in ${RECONNECT_DELAY_MS}ms`)
-    setTimeout(() => connect(url, hostName, token, pm), RECONNECT_DELAY_MS)
+    console.warn(`daemon disconnected — reconnecting in ${String(RECONNECT_DELAY_MS)}ms`)
+    setTimeout(() => { connect(url, hostName, token, pm) }, RECONNECT_DELAY_MS)
   })
 }

@@ -25,7 +25,8 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   const isPublic = PUBLIC_PATHS.some((p) => path.startsWith(p))
   if (isPublic) return res
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // iron-session accepts ReadonlyRequestCookies from Next.js middleware
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
   const session = await getIronSession<SessionData>(req.cookies as any, sessionOptions)
   if (!session.userId) {
     return NextResponse.redirect(new URL('/login', req.url))

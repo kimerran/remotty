@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
-  HostHello, SpawnRequest, StdinChunk, Resize, Kill,
-  StdoutChunk, SessionExit, ServerMessage, DaemonMessage,
+  HostHello, SpawnRequest,
+  ServerMessage, DaemonMessage,
 } from './index.js'
 
 describe('HostHello', () => {

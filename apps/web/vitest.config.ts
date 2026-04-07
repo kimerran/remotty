@@ -8,6 +8,8 @@ export default defineConfig({
     },
   },
   test: {
+    include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    exclude: ['src/server/db.test.ts', 'node_modules/**'],
     env: {
       SESSION_PASSWORD: 'test-session-password-at-least-32-chars!!',
     },

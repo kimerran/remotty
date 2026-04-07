@@ -7,12 +7,14 @@ export interface SessionData {
   username?: string
 }
 
-if (!process.env['SESSION_PASSWORD']) {
-  throw new Error('SESSION_PASSWORD environment variable is required')
+function getSessionPassword(): string {
+  const pw = process.env['SESSION_PASSWORD']
+  if (!pw) throw new Error('SESSION_PASSWORD environment variable is required')
+  return pw
 }
 
 export const sessionOptions: SessionOptions = {
-  password: process.env['SESSION_PASSWORD']!,
+  get password() { return getSessionPassword() },
   cookieName: 'remotty-session',
   cookieOptions: {
     secure: process.env['NODE_ENV'] === 'production',
@@ -46,7 +48,7 @@ export async function getSessionFromWsRequest(req: IncomingMessage): Promise<Ses
   const sealed = cookieMap['remotty-session']
   if (!sealed) return null
   try {
-    return await unsealData<SessionData>(sealed, { password: process.env['SESSION_PASSWORD']! })
+    return await unsealData<SessionData>(sealed, { password: getSessionPassword() })
   } catch {
     return null
   }

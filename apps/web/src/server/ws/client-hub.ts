@@ -1,43 +1,52 @@
 import { WebSocketServer, WebSocket } from 'ws'
 import type { IncomingMessage } from 'node:http'
 import { parse as parseUrl } from 'node:url'
-import { db } from '../db.js'
-import { getSessionFromWsRequest } from '../auth.js'
-import { sessionRouter } from '../session-router.js'
+import { db } from '@/server/db'
+import { getSessionFromWsRequest } from '@/server/auth'
+import { sessionRouter } from '@/server/session-router'
 
 export function registerClientHub(wss: WebSocketServer): void {
-  wss.on('connection', async (ws: WebSocket, req: IncomingMessage) => {
-    const { query } = parseUrl(req.url ?? '', true)
-    const sessionId = String(query['sessionId'] ?? '')
+  wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
+    void handleConnection(ws, req)
+  })
+}
 
-    if (!sessionId) {
-      ws.close(1008, 'sessionId required')
-      return
-    }
+async function handleConnection(ws: WebSocket, req: IncomingMessage): Promise<void> {
+  const { query } = parseUrl(req.url ?? '', true)
+  const sessionId = String(query['sessionId'] ?? '')
 
-    // Auth: verify the requesting user owns this session
-    const sessionData = await getSessionFromWsRequest(req)
-    if (!sessionData?.userId) {
-      ws.close(1008, 'Unauthorized')
-      return
-    }
+  if (!sessionId) {
+    ws.close(1008, 'sessionId required')
+    return
+  }
 
-    const dbSession = await db.session.findUnique({ where: { id: sessionId } })
-    if (!dbSession || dbSession.userId !== sessionData.userId) {
-      ws.close(1008, 'Forbidden')
-      return
-    }
+  // Auth: verify the requesting user owns this session
+  const sessionData = await getSessionFromWsRequest(req)
+  if (!sessionData?.userId) {
+    ws.close(1008, 'Unauthorized')
+    return
+  }
 
-    sessionRouter.registerClient(sessionId, ws)
+  const dbSession = await db.session.findUnique({ where: { id: sessionId } })
+  if (!dbSession || dbSession.userId !== sessionData.userId) {
+    ws.close(1008, 'Forbidden')
+    return
+  }
 
-    ws.on('message', (raw) => {
-      const daemonWs = sessionRouter.getHostWs(sessionId)
-      if (!daemonWs || daemonWs.readyState !== WebSocket.OPEN) return
-      daemonWs.send(raw.toString())
-    })
+  sessionRouter.registerClient(sessionId, ws)
 
-    ws.on('close', () => {
-      sessionRouter.removeClient(sessionId, ws)
-    })
+  ws.on('message', (raw) => {
+    const daemonWs = sessionRouter.getHostWs(sessionId)
+    if (!daemonWs || daemonWs.readyState !== WebSocket.OPEN) return
+    const rawStr = Buffer.isBuffer(raw)
+      ? raw.toString('utf8')
+      : Array.isArray(raw)
+        ? Buffer.concat(raw).toString('utf8')
+        : Buffer.from(raw).toString('utf8')
+    daemonWs.send(rawStr)
+  })
+
+  ws.on('close', () => {
+    sessionRouter.removeClient(sessionId, ws)
   })
 }

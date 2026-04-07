@@ -18,7 +18,7 @@ export async function checkRateLimit(
 ): Promise<boolean> {
   const r = getRedis()
   const now = Date.now()
-  const windowKey = `rl:${key}:${Math.floor(now / (windowSecs * 1000))}`
+  const windowKey = `rl:${key}:${String(Math.floor(now / (windowSecs * 1000)))}`
   const count = await r.incr(windowKey)
   if (count === 1) await r.expire(windowKey, windowSecs)
   return count <= limit
