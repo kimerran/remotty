@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --filter web dev",
-    "build": "pnpm --filter '*' build",
-    "lint": "pnpm --filter '*' lint",
-    "typecheck": "pnpm --filter '*' typecheck",
-    "test": "pnpm --filter '*' test",
+    "build": "pnpm --filter '*' --if-present build",
+    "lint": "pnpm --filter '*' --if-present lint",
+    "typecheck": "pnpm --filter '*' --if-present typecheck",
+    "test": "pnpm --filter '*' --if-present test",
     "format": "prettier --write ."
   },
+  "packageManager": "pnpm@10.6.4",
   "engines": {
     "node": ">=22",
     "pnpm": ">=9"
