@@ -31,7 +31,10 @@ export function Terminal({ sessionId }: TerminalProps) {
     const ws = new WebSocket(`${protocol}://${location.host}/ws/client?sessionId=${sessionId}`)
     ws.binaryType = 'arraybuffer'
 
+    let unmounted = false
+
     ws.onmessage = (e) => {
+      if (unmounted) return
       try {
         const msg: unknown = JSON.parse(
           typeof e.data === 'string' ? e.data : new TextDecoder().decode(e.data as ArrayBuffer),
@@ -66,6 +69,7 @@ export function Terminal({ sessionId }: TerminalProps) {
     ro.observe(containerRef.current)
 
     return () => {
+      unmounted = true
       ws.close()
       term.dispose()
       ro.disconnect()

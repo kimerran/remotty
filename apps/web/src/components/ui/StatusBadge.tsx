@@ -11,6 +11,7 @@ const badgeVariants = cva(
         pending: 'bg-on-surface-variant/10 text-on-surface-variant',
       },
     },
+    defaultVariants: { status: 'pending' },
   },
 )
 
@@ -23,6 +24,7 @@ const dotVariants = cva('w-1.5 h-1.5 rounded-full', {
       pending: 'bg-on-surface-variant',
     },
   },
+  defaultVariants: { status: 'pending' },
 })
 
 interface StatusBadgeProps extends VariantProps<typeof badgeVariants> {

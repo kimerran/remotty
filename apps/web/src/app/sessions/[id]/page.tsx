@@ -1,4 +1,5 @@
 import { Terminal } from './Terminal'
+import { Icon } from '@/components/ui/Icon'
 
 // In Phase 4 the sessionId comes from the URL and we don't validate it against
 // the DB yet. That validation is added in Task 9 when Prisma is wired in.
@@ -12,9 +13,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
         <span className="text-[10px] font-headline font-black text-primary tracking-tighter">R</span>
         <nav className="flex flex-col gap-4 mt-4">
           {['dashboard', 'terminal', 'dns', 'menu_book'].map((icon) => (
-            <span key={icon} className="material-symbols-outlined text-lg text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
-              {icon}
-            </span>
+            <Icon key={icon} name={icon} className="text-lg text-on-surface-variant hover:text-primary transition-colors cursor-pointer" />
           ))}
         </nav>
       </aside>
@@ -30,10 +29,11 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
             </span>
           </div>
           <button
-            className="text-on-surface-variant hover:text-error transition-colors p-1"
+            className="text-on-surface-variant hover:text-error transition-colors p-1 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Kill session"
+            disabled
           >
-            <span className="material-symbols-outlined text-lg">delete</span>
+            <Icon name="delete" className="text-lg" />
           </button>
         </header>
 

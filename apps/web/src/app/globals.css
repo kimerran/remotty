@@ -55,10 +55,10 @@
   --color-outline-variant: #3d494c;
 
   /* Fonts */
-  --font-headline: "Space Grotesk", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --font-label: "Space Grotesk", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-headline: var(--loaded-headline, "Space Grotesk", sans-serif);
+  --font-body: var(--loaded-body, "Inter", sans-serif);
+  --font-label: var(--loaded-headline, "Space Grotesk", sans-serif);
+  --font-mono: var(--loaded-mono, "JetBrains Mono", monospace);
 
   /* Radii — override Tailwind defaults */
   --radius-DEFAULT: 0.125rem;
