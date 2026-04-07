@@ -9,11 +9,11 @@ export function LoginForm() {
   const router = useRouter()
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+    e.preventDefault()
     void handleSubmitAsync(e)
   }
 
   async function handleSubmitAsync(e: React.SyntheticEvent<HTMLFormElement>) {
-    e.preventDefault()
     setLoading(true)
     setError(null)
 
@@ -34,7 +34,7 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} method="post" className="space-y-6">
       <div>
         <label htmlFor="username" className="block text-xs font-bold text-primary font-label uppercase tracking-widest mb-3">
           Username
