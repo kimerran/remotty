@@ -1,5 +1,4 @@
 import { getIronSession, unsealData, type SessionOptions } from 'iron-session'
-import { cookies } from 'next/headers'
 import type { IncomingMessage } from 'node:http'
 
 export interface SessionData {
@@ -25,6 +24,7 @@ export const sessionOptions: SessionOptions = {
 
 /** Use in Server Components and Route Handlers (App Router) */
 export async function getSession() {
+  const { cookies } = await import('next/headers')
   return getIronSession<SessionData>(await cookies(), sessionOptions)
 }
 

@@ -19,5 +19,15 @@
     "eslint": "^9.0.0",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "bcrypt",
+      "esbuild",
+      "node-pty",
+      "prisma",
+      "sharp"
+    ]
   }
 }

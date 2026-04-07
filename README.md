@@ -43,6 +43,9 @@ pnpm --filter web exec prisma migrate dev --name init
 
 # Seed admin user, Claude Code profile, and local-dev host
 pnpm --filter web db:seed
+
+# Generate the Prisma client (required before first run)
+pnpm --filter web exec prisma generate
 ```
 
 ### 5. Start the web server
