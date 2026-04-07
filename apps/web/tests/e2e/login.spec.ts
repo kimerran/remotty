@@ -24,8 +24,8 @@ test.describe('Authentication', () => {
     }
 
     await page.goto('/login')
-    await page.getByLabel(/username/i).fill(username)
-    await page.getByLabel(/password/i).fill(password)
+    await page.getByLabel(/username/i).fill(String(username))
+    await page.getByLabel(/password/i).fill(String(password))
     await page.getByRole('button', { name: /sign in/i }).click()
     await page.waitForURL('/sessions')
     await expect(page).toHaveURL(/sessions/)
@@ -41,8 +41,8 @@ test.describe('Sessions Dashboard', () => {
       test.skip(true, 'Admin credentials not configured')
     }
     await page.goto('/login')
-    await page.getByLabel(/username/i).fill(username)
-    await page.getByLabel(/password/i).fill(password)
+    await page.getByLabel(/username/i).fill(String(username))
+    await page.getByLabel(/password/i).fill(String(password))
     await page.getByRole('button', { name: /sign in/i }).click()
     await page.waitForURL('/sessions')
   })
