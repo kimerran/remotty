@@ -1,0 +1,33 @@
+{
+  "name": "agent-orchestrator",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter '*' --if-present build",
+    "lint": "pnpm --filter '*' --if-present lint",
+    "typecheck": "pnpm --filter '*' --if-present typecheck",
+    "test": "pnpm --filter '*' --if-present test",
+    "format": "prettier --write ."
+  },
+  "packageManager": "pnpm@10.6.4",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "bcrypt",
+      "esbuild",
+      "node-pty",
+      "prisma",
+      "sharp"
+    ]
+  }
+}
