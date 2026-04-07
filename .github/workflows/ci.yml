@@ -46,16 +46,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Generate Prisma client
+        run: pnpm --filter web exec prisma generate
+        env:
+          DATABASE_URL: postgresql://orch:orch@localhost:5432/orch
+
       - name: Build
         run: pnpm build
 
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Generate Prisma client & run migrations
-        run: |
-          pnpm --filter web exec prisma generate
-          pnpm --filter web exec prisma migrate deploy
+      - name: Run migrations
+        run: pnpm --filter web exec prisma migrate deploy
         env:
           DATABASE_URL: postgresql://orch:orch@localhost:5432/orch
 
