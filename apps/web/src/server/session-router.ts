@@ -1,9 +1,13 @@
 import type WebSocket from 'ws'
 
+// Stored on globalThis so the custom server and Next.js route handlers share the same instance
+const g = globalThis as unknown as { srHostMap?: Map<string, WebSocket>; srClientMap?: Map<string, Set<WebSocket>> }
+if (!g.srHostMap) g.srHostMap = new Map<string, WebSocket>()
+if (!g.srClientMap) g.srClientMap = new Map<string, Set<WebSocket>>()
 // Maps sessionId → the daemon WS that owns that session
-const hostMap = new Map<string, WebSocket>()
+const hostMap = g.srHostMap
 // Maps sessionId → all browser WS connections watching that session
-const clientMap = new Map<string, Set<WebSocket>>()
+const clientMap = g.srClientMap
 
 export const sessionRouter = {
   registerHostSession(sessionId: string, ws: WebSocket): void {

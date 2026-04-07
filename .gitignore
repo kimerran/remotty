@@ -1,3 +1,11 @@
+# Planning / design artifacts
+AGENT.md
+DESIGN.md
+SPEC.md
+boot.prompt
+stitch.html
+remotty.zip
+
 node_modules/
 dist/
 .next/

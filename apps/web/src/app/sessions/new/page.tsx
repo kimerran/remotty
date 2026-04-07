@@ -1,5 +1,5 @@
 import { requireAuth } from '@/server/auth'
-import { db } from '@/server/db'
+import { getDb } from '@/server/db'
 import { redirect } from 'next/navigation'
 import { SpawnForm } from './SpawnForm'
 
@@ -8,8 +8,8 @@ export default async function NewSessionPage() {
   if (!auth) redirect('/login')
 
   const [hosts, profiles] = await Promise.all([
-    db.host.findMany({ where: { online: true }, select: { id: true, name: true } }),
-    db.profile.findMany({ select: { id: true, name: true } }),
+    getDb().host.findMany({ where: { online: true }, select: { id: true, name: true } }),
+    getDb().profile.findMany({ select: { id: true, name: true } }),
   ])
 
   return (

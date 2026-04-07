@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import bcrypt from 'bcrypt'
 import { z } from 'zod'
-import { db } from '@/server/db'
+import { getDb } from '@/server/db'
 import { getSession } from '@/server/auth'
 import { checkRateLimit } from '@/server/rate-limit'
 
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   const { username, password } = parsed.data
 
-  const user = await db.user.findUnique({ where: { username } })
+  const user = await getDb().user.findUnique({ where: { username } })
   if (!user) {
     // Constant-time response to prevent username enumeration
     await bcrypt.hash('dummy', 12)

@@ -1,7 +1,7 @@
 import { WebSocketServer, WebSocket } from 'ws'
 import type { IncomingMessage } from 'node:http'
 import { parse as parseUrl } from 'node:url'
-import { db } from '@/server/db'
+import { getDb } from '@/server/db'
 import { getSessionFromWsRequest } from '@/server/auth'
 import { sessionRouter } from '@/server/session-router'
 
@@ -27,7 +27,7 @@ async function handleConnection(ws: WebSocket, req: IncomingMessage): Promise<vo
     return
   }
 
-  const dbSession = await db.session.findUnique({ where: { id: sessionId } })
+  const dbSession = await getDb().session.findUnique({ where: { id: sessionId } })
   if (!dbSession || dbSession.userId !== sessionData.userId) {
     ws.close(1008, 'Forbidden')
     return

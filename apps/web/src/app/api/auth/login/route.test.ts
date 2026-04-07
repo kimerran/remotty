@@ -1,12 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+const mockUserFindUnique = vi.fn()
+
 // Mock the db module
 vi.mock('@/server/db', () => ({
-  db: {
+  getDb: vi.fn().mockReturnValue({
     user: {
-      findUnique: vi.fn(),
+      findUnique: mockUserFindUnique,
     },
-  },
+  }),
 }))
 
 // Mock iron-session
@@ -29,7 +31,6 @@ vi.mock('@/server/rate-limit', () => ({
 }))
 
 import { POST } from './route.js'
-import { db } from '@/server/db'
 import { checkRateLimit } from '@/server/rate-limit'
 import bcrypt from 'bcrypt'
 import type { NextRequest } from 'next/server'
@@ -48,8 +49,7 @@ describe('POST /api/auth/login', () => {
   })
 
   it('returns 401 on unknown username', async () => {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    vi.mocked(db.user.findUnique).mockResolvedValue(null)
+    mockUserFindUnique.mockResolvedValue(null)
     const req = new Request('http://localhost/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ username: 'nobody', password: 'x' }),
@@ -60,8 +60,7 @@ describe('POST /api/auth/login', () => {
   })
 
   it('returns 401 on wrong password', async () => {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    vi.mocked(db.user.findUnique).mockResolvedValue({
+    mockUserFindUnique.mockResolvedValue({
       id: '1', username: 'admin', passwordHash: await bcrypt.hash('correct', 12),
       role: 'ADMIN', createdAt: new Date(),
     } as never)
@@ -76,8 +75,7 @@ describe('POST /api/auth/login', () => {
 
   it('returns 200 on correct credentials', async () => {
     const hash = await bcrypt.hash('correct', 12)
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    vi.mocked(db.user.findUnique).mockResolvedValue({
+    mockUserFindUnique.mockResolvedValue({
       id: 'user-1', username: 'admin', passwordHash: hash,
       role: 'ADMIN', createdAt: new Date(),
     } as never)

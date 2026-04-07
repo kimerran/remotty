@@ -28,7 +28,8 @@ async function start() {
     } else if (url.startsWith('/ws/client')) {
       clientWss.handleUpgrade(req, socket, head, (ws) => clientWss.emit('connection', ws, req))
     } else {
-      socket.destroy()
+      // Let Next.js handle HMR and other internal WebSocket upgrades
+      app.getUpgradeHandler()(req, socket, head)
     }
   })
 

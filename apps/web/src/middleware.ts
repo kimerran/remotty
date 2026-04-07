@@ -15,9 +15,10 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   if (process.env['NODE_ENV'] === 'production') {
     res.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
   }
+  const isDev = process.env['NODE_ENV'] !== 'production'
   res.headers.set(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' ws: wss:; img-src 'self' data:;",
+    `default-src 'self'; script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' ws: wss:; img-src 'self' data:;`,
   )
 
   // Auth guard

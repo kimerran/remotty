@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { db } from './db.js'
+import { getDb } from './db.js'
+const db = getDb()
 
 // These tests require a real database. Run: docker compose up -d
 // then: DATABASE_URL=postgresql://orch:orch@localhost:5432/orch pnpm test

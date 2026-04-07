@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { requireAuth } from '@/server/auth'
-import { db } from '@/server/db'
+import { getDb } from '@/server/db'
 import { spawnOnDaemon } from '@/server/ws/host-hub'
 
 const CreateSessionBody = z.object({
@@ -22,14 +22,14 @@ export async function POST(req: Request): Promise<NextResponse> {
   const { hostId, profileId, cols, rows } = parsed.data
 
   // Verify host is online
-  const host = await db.host.findUnique({ where: { id: hostId } })
+  const host = await getDb().host.findUnique({ where: { id: hostId } })
   if (!host?.online) return NextResponse.json({ error: 'Host not available' }, { status: 409 })
 
-  const profile = await db.profile.findUnique({ where: { id: profileId } })
+  const profile = await getDb().profile.findUnique({ where: { id: profileId } })
   if (!profile) return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
 
   // Create session record
-  const session = await db.session.create({
+  const session = await getDb().session.create({
     data: {
       hostId,
       profileId,
@@ -51,12 +51,12 @@ export async function POST(req: Request): Promise<NextResponse> {
   })
 
   if (!daemonWs) {
-    await db.session.update({ where: { id: session.id }, data: { status: 'ERROR' } })
+    await getDb().session.update({ where: { id: session.id }, data: { status: 'ERROR' } })
     return NextResponse.json({ error: 'No daemon available for this host' }, { status: 503 })
   }
 
   // Optimistically mark as RUNNING
-  await db.session.update({ where: { id: session.id }, data: { status: 'RUNNING' } })
+  await getDb().session.update({ where: { id: session.id }, data: { status: 'RUNNING' } })
 
   return NextResponse.json({ sessionId: session.id })
 }

@@ -1,5 +1,5 @@
 import { requireAuth } from '@/server/auth'
-import { db } from '@/server/db'
+import { getDb } from '@/server/db'
 import { redirect, notFound } from 'next/navigation'
 import { Terminal } from './Terminal'
 
@@ -8,7 +8,7 @@ export default async function SessionPage({ params }: { params: Promise<{ id: st
   if (!auth) redirect('/login')
 
   const { id } = await params
-  const session = await db.session.findUnique({
+  const session = await getDb().session.findUnique({
     where: { id },
     include: { host: true, profile: true },
   })
