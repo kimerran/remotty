@@ -69,6 +69,12 @@ pnpm --filter daemon dev
 
 The daemon reads `SERVER_WS_URL`, `HOST_NAME`, and `HOST_TOKEN` from the environment (sourced from `.env` above).
 
+Use `--cwd <path>` (or `-c <path>`) to set the working directory for spawned sessions:
+
+```bash
+pnpm --filter daemon dev -- --cwd /path/to/projects
+```
+
 ### 7. Open the app
 
 Navigate to **http://localhost:3000** and log in with your `ADMIN_USERNAME` / `ADMIN_PASSWORD` from `.env`.
