@@ -68,6 +68,14 @@ pnpm dev
 
 ### 6. Start the daemon (separate terminal)
 
+First, build the shared protocol package if you haven't already:
+
+```bash
+pnpm --filter @orchestrator/protocol build
+```
+
+Then start the daemon:
+
 ```bash
 set -a && source .env && set +a
 pnpm --filter daemon dev
