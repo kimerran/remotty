@@ -33,7 +33,7 @@ export async function getSession() {
 export async function requireAuth(): Promise<SessionData | null> {
   const session = await getSession()
   if (!session.userId) return null
-  return { userId: session.userId, username: session.username }
+  return session
 }
 
 /** Extract iron-session data from a raw HTTP upgrade request (WS context).
