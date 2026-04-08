@@ -16,6 +16,12 @@ Spawn and manage coding agents (Claude Code, Codex, etc.) across machines with a
 pnpm install
 ```
 
+> **Troubleshooting:** If `pnpm install` fails with `sh: node-gyp: not found`, install it globally first:
+> ```bash
+> npm install -g node-gyp
+> ```
+> This is required to compile the `node-pty` native addon.
+
 ### 2. Start local services
 
 ```bash
